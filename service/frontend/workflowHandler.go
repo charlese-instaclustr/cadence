@@ -4522,12 +4522,48 @@ func (wh *WorkflowHandler) GetClusterInfo(
 		return nil, wh.error(createServiceBusyError(), scope)
 	}
 
+	membershipInfo := types.MembershipInfo{}
+	if monitor := wh.Resource.GetMembershipResolver(); monitor != nil {
+		currentHost, err := monitor.WhoAmI()
+		if err != nil {
+			return nil, wh.error(err, scope)
+		}
+		membershipInfo.CurrentHost = &types.HostInfo{
+			Identity: currentHost.Identity(),
+		}
+
+		var rings []*types.RingInfo
+		for _, role := range service.List {
+			var servers []*types.HostInfo
+			members, err := monitor.Members(role)
+			if err != nil {
+				return nil, wh.error(err, scope)
+			}
+
+			for _, server := range members {
+				servers = append(servers, &types.HostInfo{
+					Identity: server.Identity(),
+				})
+				membershipInfo.ReachableMembers = append(membershipInfo.ReachableMembers, server.Identity())
+			}
+
+			rings = append(rings, &types.RingInfo{
+				Role:        role,
+				MemberCount: int32(len(servers)),
+				Members:     servers,
+			})
+		}
+		membershipInfo.Rings = rings
+	}
+
 	return &types.ClusterInfo{
 		SupportedClientVersions: &types.SupportedClientVersions{
 			GoSdk:   client.SupportedGoSDKVersion,
 			JavaSdk: client.SupportedJavaSDKVersion,
 		},
+		MembershipInfo: &membershipInfo,
 	}, nil
+
 }
 
 func checkPermission(

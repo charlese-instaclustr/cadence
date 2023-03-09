@@ -162,18 +162,6 @@ func (v *GetWorkflowExecutionRawHistoryV2Response) GetVersionHistory() (o *Versi
 	return
 }
 
-// HostInfo is an internal type (TBD...)
-type HostInfo struct {
-	Identity string `json:"Identity,omitempty"`
-}
-
-// MembershipInfo is an internal type (TBD...)
-type MembershipInfo struct {
-	CurrentHost      *HostInfo   `json:"currentHost,omitempty"`
-	ReachableMembers []string    `json:"reachableMembers,omitempty"`
-	Rings            []*RingInfo `json:"rings,omitempty"`
-}
-
 // PersistenceSetting is used to expose persistence engine settings
 type PersistenceSetting struct {
 	Key   string `json:"key"`
@@ -228,13 +216,6 @@ func (v *ResendReplicationTasksRequest) GetRemoteCluster() (o string) {
 		return v.RemoteCluster
 	}
 	return
-}
-
-// RingInfo is an internal type (TBD...)
-type RingInfo struct {
-	Role        string      `json:"role,omitempty"`
-	MemberCount int32       `json:"memberCount,omitempty"`
-	Members     []*HostInfo `json:"members,omitempty"`
 }
 
 type GetDynamicConfigRequest struct {

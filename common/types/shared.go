@@ -636,6 +636,26 @@ func (v *CloseShardRequest) GetShardID() (o int32) {
 // ClusterInfo is an internal type (TBD...)
 type ClusterInfo struct {
 	SupportedClientVersions *SupportedClientVersions `json:"supportedClientVersions,omitempty"`
+	MembershipInfo          *MembershipInfo          `json:"membershipInfo,omitempty"`
+}
+
+// RingInfo is an internal type (TBD...)
+type RingInfo struct {
+	Role        string      `json:"role,omitempty"`
+	MemberCount int32       `json:"memberCount,omitempty"`
+	Members     []*HostInfo `json:"members,omitempty"`
+}
+
+// HostInfo is an internal type (TBD...)
+type HostInfo struct {
+	Identity string `json:"Identity,omitempty"`
+}
+
+// MembershipInfo is an internal type (TBD...)
+type MembershipInfo struct {
+	CurrentHost      *HostInfo   `json:"currentHost,omitempty"`
+	ReachableMembers []string    `json:"reachableMembers,omitempty"`
+	Rings            []*RingInfo `json:"rings,omitempty"`
 }
 
 // ClusterReplicationConfiguration is an internal type (TBD...)
